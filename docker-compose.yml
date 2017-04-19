@@ -1,0 +1,176 @@
+version: '2'
+
+services:
+  nginx:
+    image: nginx    
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/html:/etc/nginx/html
+    depends_on:
+      - main
+    networks:
+      - app
+  main:
+    build: ../main
+    ports:
+      - "5488:5488"  
+    env_file: configuration.env    
+    volumes:
+      - /tmp:/tmp
+    container_name: main
+    depends_on:
+      - mongodb
+    networks:
+      - app
+
+  sales:
+    build: ../sales
+    ports:
+      - "1500:1500"
+    env_file: configuration.env
+    container_name: sales   
+    depends_on:
+      - mongodb 
+    networks:
+      - app 
+
+  workers:
+    build: ../workers
+    ports:
+      - "1000:1000"
+    env_file: configuration.env   
+    container_name: workers
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mongodb
+    networks:
+      - app
+      - nt1
+      - nt2
+      - np1
+      - nw1
+      - ne1
+      - nf1
+      - nh1
+
+  t1:
+    build: ../tasks
+    read_only: true
+    cpu_quota: 33000    
+    memswap_limit: 512m
+    mem_limit: 320m
+    container_name: t1
+    volumes:
+      - /tmp/jsreport-temp:/tmp
+    networks:
+      - nt1   
+  
+  t2:
+    build: ../tasks
+    read_only: true
+    cpu_quota: 33000    
+    memswap_limit: 512m
+    mem_limit: 320m
+    container_name: t2
+    volumes:
+      - /tmp/jsreport-temp:/tmp
+    networks:
+      - nt2
+  
+  p1:
+    build: ../phantom-pdf
+    read_only: true
+    cpu_quota: 50000    
+    memswap_limit: 512m
+    mem_limit: 320m
+    container_name: p1
+    volumes:
+      - /tmp/jsreport-temp:/tmp
+    networks:
+      - np1
+
+  w1:
+    build: ../wkhtmltopdf
+    read_only: true
+    cpu_quota: 50000    
+    memswap_limit: 512m
+    mem_limit: 320m
+    container_name: w1
+    volumes:
+      - /tmp/jsreport-temp:/tmp
+    environment:
+      - temp=/tmp
+    networks:
+      - nw1
+
+  f1:
+    build: ../fop-pdf
+    read_only: true
+    cpu_quota: 50000    
+    memswap_limit: 512m
+    mem_limit: 420m
+    container_name: f1
+    volumes:
+      - /tmp/jsreport-temp:/tmp
+    environment:
+      - temp=/tmp
+    networks:
+      - nf1
+
+  h1:
+    build: ../html-to-xlsx
+    read_only: true
+    cpu_quota: 50000    
+    memswap_limit: 512m
+    mem_limit: 320m
+    container_name: h1
+    volumes:
+      - /tmp/jsreport-temp:/tmp
+    environment:
+      - temp=/tmp
+    networks:
+      - nh1
+
+  e1:
+    build: ../electron-pdf
+    read_only: true
+    cpu_quota: 50000    
+    memswap_limit: 512m
+    mem_limit: 320m
+    container_name: e1
+    volumes:
+      - /tmp/jsreport-temp:/tmp
+    environment:
+      - temp=/tmp
+    networks:
+      - ne1
+
+  mongodb:  
+    image: mongo:3.0.4
+    container_name: mongodb  
+    ports:
+      - "27017:27017"  
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+  nt1:
+    driver: bridge
+  nt2:
+    driver: bridge
+  np1:
+    driver: bridge
+  nh1:
+    driver: bridge
+  ne1:
+    driver: bridge
+  nf1:
+    driver: bridge
+  nw1:
+    driver: bridge
