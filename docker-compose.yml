@@ -2,7 +2,7 @@ version: '2'
 
 services:
   nginx:
-    image: nginx    
+    image: nginx
     container_name: nginx
     ports:
       - "80:80"
@@ -16,11 +16,16 @@ services:
   main:
     build: ../main
     ports:
-      - "5488:5488"  
-    env_file: configuration.env    
+      - "5488:5488"
+    env_file: configuration.env
     volumes:
       - /tmp:/tmp
     container_name: main
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     depends_on:
       - mongodb
     networks:
@@ -31,18 +36,28 @@ services:
     ports:
       - "1500:1500"
     env_file: configuration.env
-    container_name: sales   
+    container_name: sales
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     depends_on:
-      - mongodb 
+      - mongodb
     networks:
-      - app 
+      - app
 
   workers:
     build: ../workers
     ports:
       - "1000:1000"
-    env_file: configuration.env   
+    env_file: configuration.env
     container_name: workers
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
@@ -60,34 +75,49 @@ services:
   t1:
     build: ../tasks
     read_only: true
-    cpu_quota: 33000    
+    cpu_quota: 33000
     memswap_limit: 512m
     mem_limit: 320m
     container_name: t1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     volumes:
       - /tmp/jsreport-temp:/tmp
     networks:
-      - nt1   
-  
+      - nt1
+
   t2:
     build: ../tasks
     read_only: true
-    cpu_quota: 33000    
+    cpu_quota: 33000
     memswap_limit: 512m
     mem_limit: 320m
     container_name: t2
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     volumes:
       - /tmp/jsreport-temp:/tmp
     networks:
       - nt2
-  
+
   p1:
     build: ../phantom-pdf
     read_only: true
-    cpu_quota: 50000    
+    cpu_quota: 50000
     memswap_limit: 512m
     mem_limit: 320m
     container_name: p1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     volumes:
       - /tmp/jsreport-temp:/tmp
     networks:
@@ -96,10 +126,15 @@ services:
   w1:
     build: ../wkhtmltopdf
     read_only: true
-    cpu_quota: 50000    
+    cpu_quota: 50000
     memswap_limit: 512m
     mem_limit: 320m
     container_name: w1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     volumes:
       - /tmp/jsreport-temp:/tmp
     environment:
@@ -110,10 +145,15 @@ services:
   f1:
     build: ../fop-pdf
     read_only: true
-    cpu_quota: 50000    
+    cpu_quota: 50000
     memswap_limit: 512m
     mem_limit: 420m
     container_name: f1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     volumes:
       - /tmp/jsreport-temp:/tmp
     environment:
@@ -124,10 +164,15 @@ services:
   h1:
     build: ../html-to-xlsx
     read_only: true
-    cpu_quota: 50000    
+    cpu_quota: 50000
     memswap_limit: 512m
     mem_limit: 320m
     container_name: h1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     volumes:
       - /tmp/jsreport-temp:/tmp
     environment:
@@ -138,10 +183,15 @@ services:
   e1:
     build: ../electron-pdf
     read_only: true
-    cpu_quota: 50000    
+    cpu_quota: 50000
     memswap_limit: 512m
     mem_limit: 320m
     container_name: e1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     volumes:
       - /tmp/jsreport-temp:/tmp
     environment:
@@ -149,11 +199,11 @@ services:
     networks:
       - ne1
 
-  mongodb:  
+  mongodb:
     image: mongo:3.0.4
-    container_name: mongodb  
+    container_name: mongodb
     ports:
-      - "27017:27017"  
+      - "27017:27017"
     networks:
       - app
 
