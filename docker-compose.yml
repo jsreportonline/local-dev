@@ -182,7 +182,7 @@ services:
 
   e1:
     build: ../electron-pdf
-    read_only: true
+    read_only: false
     cpu_quota: 50000
     memswap_limit: 512m
     mem_limit: 320m
