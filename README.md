@@ -12,6 +12,9 @@
 5. run `docker-compose up` (can take ~10 minutes based on the network)
 6. open [http://local.net](http://local.net) in browser and register tenant with subdomain `test`
 
+Note on windows you need to set tmp volume to c:\\temp and run $Env:COMPOSE_CONVERT_WINDOWS_PATHS=1
+and set ip="192.168.0.19" and extensions:workerDockerManager:containerTempVolumeSourcePrefix=c:\temp in configuration.env
+
 ## Technical notes
 
 ### Composition
