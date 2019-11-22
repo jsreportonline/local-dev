@@ -1,4 +1,4 @@
-version: '2'
+version: '2.2'
 
 services:
   nginx:
@@ -14,6 +14,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/html:/etc/nginx/html
+    cpus: 1.5
     depends_on:
       - main
     networks:
@@ -26,6 +27,7 @@ services:
     volumes:
       - /tmp:/tmp
       - /var/run/docker.sock:/var/run/docker.sock
+    cpus: 1.5
     container_name: main
     logging:
       driver: "json-file"
@@ -48,6 +50,7 @@ services:
       options:
         max-size: "100k"
         max-file: "5"
+    cpus: 1.5
     depends_on:
       - mongodb
     networks:
