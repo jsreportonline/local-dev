@@ -4,6 +4,11 @@ services:
   nginx:
     image: nginx
     container_name: nginx
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+        max-file: "5"
     ports:
       - "80:80"
     volumes:
