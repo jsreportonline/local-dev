@@ -2,7 +2,7 @@ version: '2.2'
 
 services:
   nginx:
-    image: nginx
+    image: nginx:1.19.0
     container_name: nginx
     logging:
       driver: "json-file"
