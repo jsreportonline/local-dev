@@ -14,7 +14,9 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/html:/etc/nginx/html
-    cpus: 1.5
+    mem_limit: 200m
+    memswap_limit: 500m
+    cpus: 1
     depends_on:
       - main
     networks:
@@ -27,6 +29,8 @@ services:
     volumes:
       - /tmp:/tmp
       - /var/run/docker.sock:/var/run/docker.sock
+    mem_limit: 1024m
+    memswap_limit: 1524m
     cpus: 1.5
     container_name: main
     logging:
@@ -50,7 +54,9 @@ services:
       options:
         max-size: "100k"
         max-file: "5"
-    cpus: 1.5
+    mem_limit: 200m
+    memswap_limit: 500m
+    cpus: 0.5
     depends_on:
       - mongodb
     networks:
